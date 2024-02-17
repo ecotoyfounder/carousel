@@ -1,6 +1,8 @@
 <div *ngIf="slide" class="slide" style="background-image: url({{ slide.bgImageUrl }})">
   <img [src]="slide.imageUrl" alt="logo">
   <h1>{{ slide.title }}</h1>
-  <h3 [innerHTML]="slide.text | highlightWords"></h3>
+  <h3>
+    <app-height-lighter [text]="slide.text"></app-height-lighter>
+  </h3>
   <button>{{ slide.buttonContent }}</button>
 </div>

@@ -20,6 +20,11 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "optimization": true,
+            "outputHashing": "all",
+            "namedChunks": false,
+            "sourceMap": false,
             "assets": [
               "src/favicon.ico",
               "src/assets"

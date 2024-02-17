@@ -1,9 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {SlideComponent} from "../slide/slide.component";
-import {Slide} from "../../interfaces/slide";
-import {NgForOf} from "@angular/common";
-import {SlideService} from "../../services/slide.service";
-import {Subscription} from "rxjs";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgForOf } from "@angular/common";
+import { SlideService } from "@services/slide.service";
+import { Subject, interval } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import {SlideComponent} from "@components/slide/slide.component";
+import {Slide} from "@interfaces/slide";
 
 @Component({
   selector: 'app-carousel-component',
@@ -20,15 +21,14 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
   slides: Slide[] = [];
   startX = 0;
   currentIndex = 0;
-  interval = 0;
   slideWidth = window.innerWidth;
-  slideSubscription = new Subscription();
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private slideService: SlideService) {
-  }
+  constructor(private slideService: SlideService) { }
 
   ngOnInit() {
-    this.slideSubscription = this.slideService.getSlides()
+    this.slideService.getSlides()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (slides) => {
           this.slides = slides
@@ -38,9 +38,11 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.interval = setInterval(() => {
-      this.nextSlide();
-    }, 10000);
+    interval(10000)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.nextSlide();
+      });
   }
 
   nextSlide() {
@@ -65,9 +67,7 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.slideSubscription.unsubscribe();
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

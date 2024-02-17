@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable, of} from "rxjs";
-import {Slide} from "../interfaces/slide";
+import {Slide} from "@interfaces/slide";
 
 @Injectable({
   providedIn: 'root'
