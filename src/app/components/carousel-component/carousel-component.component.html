@@ -1,0 +1,13 @@
+<div class="carousel-container" (touchmove)="swipe($event)">
+  <div
+    class="slides"
+    [style.transform]="'translateX(' + (-currentIndex * slideWidth) + 'px)'">
+    <div
+      class="slide"
+      *ngFor="let slide of slides; let i = index"
+      [class.active]="i === currentIndex">
+      <app-slide [slide]="slide"></app-slide>
+    </div>
+  </div>
+</div>
+
