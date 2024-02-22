@@ -1,41 +1,37 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {NgForOf, NgIf} from "@angular/common";
-import {SlideService} from "@services/slide.service";
-import {interval, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {SlideComponent} from "@components/slide/slide.component";
-import {Slide} from "@interfaces/slide";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgForOf, NgIf } from '@angular/common';
+import { SlideService } from '@services/slide.service';
+import { interval, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { SlideComponent } from '@components/slide/slide.component';
+import { Slide } from '@interfaces/slide';
 
 @Component({
   selector: 'app-carousel-component',
   standalone: true,
-  imports: [
-    SlideComponent,
-    NgIf,
-    NgForOf
-  ],
+  imports: [SlideComponent, NgIf, NgForOf],
   templateUrl: './carousel-component.component.html',
-  styleUrl: './carousel-component.component.css'
+  styleUrl: './carousel-component.component.css',
 })
 export class CarouselComponentComponent implements OnInit, OnDestroy {
-
   slides: Slide[] = [];
   startX = 0;
   currentIndex = 0;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
-  constructor(private slideService: SlideService) { }
+  constructor(private slideService: SlideService) {}
 
   ngOnInit() {
-    this.slideService.getSlides()
+    this.slideService
+      .getSlides()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (slides) => {
-          this.slides = slides
+          this.slides = slides;
         },
         error: (error) => {
           console.error('Error fetching slides:', error);
-        }
+        },
       });
 
     interval(10000)
@@ -47,7 +43,9 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
 
   nextSlide() {
     const isFirstSlide = this.currentIndex === 0;
-    this.currentIndex = isFirstSlide ? this.slides.length - 1 : this.currentIndex - 1;
+    this.currentIndex = isFirstSlide
+      ? this.slides.length - 1
+      : this.currentIndex - 1;
   }
 
   prevSlide() {
