@@ -3,17 +3,9 @@
   position: relative;
   overflow: hidden;
   margin: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .slides {
-  display: flex;
   transition: transform 0.5s ease;
-}
-
-.slide {
-  flex: 0 0 100%;
-}
-
-.active {
-  display: block;
 }

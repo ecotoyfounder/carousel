@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgForOf } from "@angular/common";
-import { SlideService } from "@services/slide.service";
-import { Subject, interval } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {NgForOf, NgIf} from "@angular/common";
+import {SlideService} from "@services/slide.service";
+import {interval, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 import {SlideComponent} from "@components/slide/slide.component";
 import {Slide} from "@interfaces/slide";
 
@@ -11,6 +11,7 @@ import {Slide} from "@interfaces/slide";
   standalone: true,
   imports: [
     SlideComponent,
+    NgIf,
     NgForOf
   ],
   templateUrl: './carousel-component.component.html',
@@ -21,7 +22,6 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
   slides: Slide[] = [];
   startX = 0;
   currentIndex = 0;
-  slideWidth = window.innerWidth;
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(private slideService: SlideService) { }
@@ -41,16 +41,18 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
     interval(10000)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.nextSlide();
+        this.prevSlide();
       });
   }
 
   nextSlide() {
-    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+    const isFirstSlide = this.currentIndex === 0;
+    this.currentIndex = isFirstSlide ? this.slides.length - 1 : this.currentIndex - 1;
   }
 
   prevSlide() {
-    this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    const isLastIndex = this.currentIndex === this.slides.length - 1;
+    this.currentIndex = isLastIndex ? 0 : this.currentIndex + 1;
   }
 
   swipe(event: TouchEvent) {

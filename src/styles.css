@@ -12,42 +12,6 @@ body {
   font-weight: bolder;
 }
 
-button {
-  display: block;
-  border: #fff solid 2px;
-  border-radius: 50px;
-  width: fit-content;
-  min-width: 150px;
-  height: 40px;
-  padding-inline: 10px;
-  background-color: transparent;
-  margin: 20px auto;
-  font-size: 18px;
-  font-weight: bold;
-  color: white;
-}
-
-button:hover {
-  cursor: pointer;
-}
-
-h1 {
-  margin-bottom: 10px;
-}
-
-h3 {
-  font-weight: normal;
-}
-
-h1, h3 {
-  color: white;
-  padding: 30px;
-}
-
-img {
-  margin-top: 50px;
-}
-
 .yellow-word {
   color: yellow;
 }
