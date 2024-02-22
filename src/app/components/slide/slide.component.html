@@ -1,5 +1,9 @@
-<div *ngIf="slide" class="slide" [style.background-image]="'url(' + slide.bgImageUrl + ')'">
-  <img [src]="slide.imageUrl" alt="logo">
+<div
+  *ngIf="slide"
+  class="slide"
+  [style.background-image]="'url(' + slide.bgImageUrl + ')'"
+>
+  <img [src]="slide.imageUrl" alt="logo" />
   <h1>{{ slide.title }}</h1>
   <h3 [innerHTML]="highlightText(slide.text)"></h3>
   <button>{{ slide.buttonContent }}</button>

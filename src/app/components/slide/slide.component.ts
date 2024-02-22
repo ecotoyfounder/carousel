@@ -1,16 +1,14 @@
-import {Component, Input} from '@angular/core';
-import {Slide} from "@interfaces/slide";
-import {NgIf} from "@angular/common";
-import {SlideService} from "@services/slide.service";
+import { Component, Input } from '@angular/core';
+import { Slide } from '@interfaces/slide';
+import { NgIf } from '@angular/common';
+import { SlideService } from '@services/slide.service';
 
 @Component({
   selector: 'app-slide',
   standalone: true,
-  imports: [
-    NgIf,
-  ],
+  imports: [NgIf],
   templateUrl: './slide.component.html',
-  styleUrl: './slide.component.css'
+  styleUrl: './slide.component.css',
 })
 export class SlideComponent {
   @Input() slide: Slide | undefined;
@@ -23,9 +21,12 @@ export class SlideComponent {
 
   highlightText(text: string): string {
     let result = text;
-    this.keywordsToHighlight.forEach(word => {
+    this.keywordsToHighlight.forEach((word) => {
       const regex = new RegExp(word, 'gi');
-      result = result.replace(regex, `<span class="yellow-word">${word}</span>`);
+      result = result.replace(
+        regex,
+        `<span class="yellow-word">${word}</span>`,
+      );
     });
     return result;
   }
