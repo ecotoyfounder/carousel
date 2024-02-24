@@ -1,23 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
 import { SlideService } from '@services/slide.service';
+import { Slide } from '@interfaces/slide';
 import { interval, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { NgForOf, NgIf } from '@angular/common';
 import { SlideComponent } from '@components/slide/slide.component';
-import { Slide } from '@interfaces/slide';
+import { carouselAnimations } from '@components/carousel.animations';
 
 @Component({
-  selector: 'app-carousel-component',
+  selector: 'app-carousel',
   standalone: true,
   imports: [SlideComponent, NgIf, NgForOf],
-  templateUrl: './carousel-component.component.html',
-  styleUrl: './carousel-component.component.css',
+  templateUrl: './carousel.component.html',
+  styleUrls: ['./carousel.component.css'],
+  animations: [carouselAnimations],
 })
-export class CarouselComponentComponent implements OnInit, OnDestroy {
+export class CarouselComponent implements OnInit, OnDestroy {
   slides: Slide[] = [];
-  startX = 0;
   currentIndex = 0;
+  startX = 0;
+  startY = 0;
   private unsubscribe$: Subject<void> = new Subject<void>();
+  animationState: 'next' | 'prev' = 'prev';
+  slideWidth = window.innerWidth;
 
   constructor(private slideService: SlideService) {}
 
@@ -37,23 +42,34 @@ export class CarouselComponentComponent implements OnInit, OnDestroy {
     interval(10000)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
-        this.prevSlide();
+        this.nextSlide();
       });
   }
 
+  getFromTransform(): string {
+    return `translateX(${this.currentIndex * -this.slideWidth}px)`;
+  }
+
+  getToTransform(): string {
+    return `translateX(${(this.currentIndex - 1) * this.slideWidth}px)`;
+  }
+
   nextSlide() {
-    const isFirstSlide = this.currentIndex === 0;
-    this.currentIndex = isFirstSlide
-      ? this.slides.length - 1
-      : this.currentIndex - 1;
+    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+    this.animationState = 'next';
   }
 
   prevSlide() {
-    const isLastIndex = this.currentIndex === this.slides.length - 1;
-    this.currentIndex = isLastIndex ? 0 : this.currentIndex + 1;
+    this.currentIndex =
+      (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    this.animationState = 'prev';
   }
 
-  swipe(event: TouchEvent) {
+  touchStart(event: TouchEvent) {
+    this.startX = event.changedTouches[0].clientX;
+  }
+
+  touchEnd(event: TouchEvent) {
     const deltaX = event.changedTouches[0].clientX - this.startX;
     const threshold = 50;
 
