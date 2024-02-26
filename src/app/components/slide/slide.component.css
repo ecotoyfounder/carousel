@@ -1,14 +1,12 @@
 .slide {
-  display: inline-block;
+  display: block;
   background-size: cover;
   background-position: center;
   max-width: 600px;
-  height: 100vh;
-  width: 100%;
+  width: 100vw;
 }
 
 button {
-  display: block;
   border: #fff solid 2px;
   border-radius: 50px;
   width: fit-content;
@@ -43,4 +41,5 @@ h3 {
 
 img {
   margin-top: 50px;
+  pointer-events: none;
 }

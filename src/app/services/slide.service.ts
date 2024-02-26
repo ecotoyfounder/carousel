@@ -6,13 +6,6 @@ import { Slide } from '@interfaces/slide';
   providedIn: 'root',
 })
 export class SlideService {
-  constructor() {}
-
-  readonly keywordsToHighlight: string[] = [
-    '35% in rewards',
-    '€30,000',
-    '€15,000',
-  ];
   getSlides(): Observable<Slide[]> {
     const slides: Slide[] = [
       {
