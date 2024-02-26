@@ -6,11 +6,12 @@ import { takeUntil } from 'rxjs/operators';
 import { NgForOf, NgIf } from '@angular/common';
 import { SlideComponent } from '@components/slide/slide.component';
 import { carouselAnimations } from '@components/carousel.animations';
+import { HammerModule } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-carousel',
   standalone: true,
-  imports: [SlideComponent, NgIf, NgForOf],
+  imports: [SlideComponent, NgIf, NgForOf, HammerModule],
   templateUrl: './carousel.component.html',
   styleUrls: ['./carousel.component.css'],
   animations: [carouselAnimations],
@@ -19,10 +20,12 @@ export class CarouselComponent implements OnInit, OnDestroy {
   slides: Slide[] = [];
   currentIndex = 0;
   startX = 0;
-  startY = 0;
   private unsubscribe$: Subject<void> = new Subject<void>();
-  animationState: 'next' | 'prev' = 'prev';
   slideWidth = window.innerWidth;
+  startTranslateValue = 0;
+
+  translateValue = '0%';
+  slideState = 0;
 
   constructor(private slideService: SlideService) {}
 
@@ -46,27 +49,14 @@ export class CarouselComponent implements OnInit, OnDestroy {
       });
   }
 
-  getFromTransform(): string {
-    return `translateX(${this.currentIndex * -this.slideWidth}px)`;
-  }
-
-  getToTransform(): string {
-    return `translateX(${(this.currentIndex - 1) * this.slideWidth}px)`;
-  }
-
-  nextSlide() {
-    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-    this.animationState = 'next';
-  }
-
-  prevSlide() {
-    this.currentIndex =
-      (this.currentIndex - 1 + this.slides.length) % this.slides.length;
-    this.animationState = 'prev';
-  }
-
   touchStart(event: TouchEvent) {
     this.startX = event.changedTouches[0].clientX;
+    this.startTranslateValue = this.currentIndex * this.slideWidth;
+  }
+
+  touchMove(event: TouchEvent) {
+    const deltaX = event.changedTouches[0].clientX - this.startX;
+    this.translateValue = `${this.startTranslateValue + deltaX}px`;
   }
 
   touchEnd(event: TouchEvent) {
@@ -80,6 +70,17 @@ export class CarouselComponent implements OnInit, OnDestroy {
         this.nextSlide();
       }
     }
+  }
+
+  nextSlide() {
+    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+    this.slideState--;
+  }
+
+  prevSlide() {
+    this.currentIndex =
+      (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    this.slideState++;
   }
 
   ngOnDestroy() {

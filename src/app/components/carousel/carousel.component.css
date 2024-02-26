@@ -1,17 +1,9 @@
 .carousel-container {
   display: block;
-  position: relative;
   overflow: hidden;
   margin: auto;
-  touch-action: pan-y;
 }
 
-.slides {
-  display: flex;
-  flex-shrink: 0;
+.slides-list {
   transition: transform 0.5s ease;
-}
-
-.slide {
-  flex: 0 0 100%;
 }

@@ -1,7 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Slide } from '@interfaces/slide';
 import { NgIf } from '@angular/common';
-import { SlideService } from '@services/slide.service';
 
 @Component({
   selector: 'app-slide',
@@ -10,24 +9,66 @@ import { SlideService } from '@services/slide.service';
   templateUrl: './slide.component.html',
   styleUrl: './slide.component.css',
 })
-export class SlideComponent {
+export class SlideComponent implements OnInit {
   @Input() slide: Slide | undefined;
+  selectedText = '';
 
-  keywordsToHighlight: string[] = [];
+  ngOnInit() {
+    const savedSelectedTextWithTags = localStorage.getItem(
+      'selectedTextWithTags',
+    );
+    if (savedSelectedTextWithTags && this.slide?.text) {
+      this.selectedText = savedSelectedTextWithTags;
+      this.highlightText(this.slide.text);
+    }
+  }
 
-  constructor(private slideService: SlideService) {
-    this.keywordsToHighlight = this.slideService.keywordsToHighlight;
+  highlightSelectedText() {
+    const selection = window.getSelection();
+
+    if (selection) {
+      this.selectedText = selection.toString().trim();
+      const words = this.selectedText.split(/\s+/);
+      words.forEach((word) => {
+        if (word.length > 0 && this.selectedText.includes(word)) {
+          const yellowHighlightedText = `<span class="yellow-word">${word}</span>`;
+          const range = selection.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(
+            document
+              .createRange()
+              .createContextualFragment(yellowHighlightedText),
+          );
+        }
+      });
+      this.updateLocalStorage();
+    }
+  }
+
+  updateSlideText() {
+    if (this.slide && this.slide.text) {
+      this.slide.text = this.highlightText(this.slide.text);
+    }
+  }
+
+  updateLocalStorage() {
+    localStorage.setItem('selectedTextWithTags', this.selectedText);
+    this.updateSlideText();
   }
 
   highlightText(text: string): string {
-    let result = text;
-    this.keywordsToHighlight.forEach((word) => {
-      const regex = new RegExp(word, 'gi');
-      result = result.replace(
-        regex,
-        `<span class="yellow-word">${word}</span>`,
+    if (this.slide) {
+      const textArr = this.slide.text.split(' ');
+      const selectedWords = textArr.filter((w) =>
+        w.includes(this.selectedText),
       );
-    });
-    return result;
+      textArr.forEach((word, index) => {
+        if (selectedWords.includes(word)) {
+          textArr[index] = selectedWords[selectedWords.indexOf(word)];
+        }
+      });
+      text = textArr.join(' ');
+    }
+    return text;
   }
 }

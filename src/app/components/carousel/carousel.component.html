@@ -1,19 +1,14 @@
 <div
   class="carousel-container"
   (touchstart)="touchStart($event)"
+  (touchmove)="touchMove($event)"
   (touchend)="touchEnd($event)"
 >
-  <div class="slides" *ngFor="let slide of slides; let i = index">
-    <app-slide
-      *ngIf="i === currentIndex"
-      [slide]="slide"
-      [@carouselAnimations]="{
-        value: animationState,
-        params: {
-          fromTransform: getFromTransform(),
-          toTransform: getToTransform()
-        }
-      }"
-    ></app-slide>
+  <div
+    class="slides-list"
+    *ngFor="let slide of slides; let i = index"
+    [@carouselAnimations]="slideState"
+  >
+    <app-slide *ngIf="i === currentIndex" [slide]="slide"></app-slide>
   </div>
 </div>
